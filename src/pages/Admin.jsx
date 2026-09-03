@@ -25,7 +25,7 @@ export default function Admin() {
     likes: 0,
   });
   const [topPosts, setTopPosts] = useState(null);
-  const [customNotifTitle, setCustomNotifTitle] = useState("Castle X");
+  const [customNotifTitle, setCustomNotifTitle] = useState("Empire X");
 const [customNotifMessage, setCustomNotifMessage] = useState("");
 const [customNotifTarget, setCustomNotifTarget] = useState("all");
 const [customNotifUsernames, setCustomNotifUsernames] = useState("");
