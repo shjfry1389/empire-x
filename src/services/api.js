@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-baseURL: "https://empire-x-backend.onrender.com",
+baseURL: "https://steep-recipe-f417empire-x-api.sharminjafari1389.workers.dev",
 });
 
 let sessionAlertShown = false;
