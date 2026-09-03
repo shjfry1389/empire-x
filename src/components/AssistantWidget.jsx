@@ -299,7 +299,7 @@ export default function AssistantWidget() {
 
                 <div style={{ minWidth: 0, textAlign: "right" }}>
                   <div style={{ fontWeight: "900", fontSize: "16px" }}>
-                    دستیار Castle X
+                    دستیار Empire X
                   </div>
                   <div
                     style={{

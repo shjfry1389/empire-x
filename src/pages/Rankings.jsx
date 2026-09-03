@@ -338,7 +338,7 @@ export default function Rankings() {
             color: "#536471",
           }}
         >
-         Castle X رتبه‌بندی هفتگی کاربران و پست‌های 
+         Empire X رتبه‌بندی هفتگی کاربران و پست‌های 
         </p>
         <div
   style={{

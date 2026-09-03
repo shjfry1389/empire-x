@@ -76,7 +76,7 @@ marginBottom: "10px",
 color: "#1d9bf0",
 }}
 >
-🏰 Castle X </h1>
+🏰 Empire X </h1>
 
 
     <p

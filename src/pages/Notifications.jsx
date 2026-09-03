@@ -187,7 +187,7 @@ export default function Notifications() {
         return "پست شما را ری‌پست کرد";
 
       case "broadcast":
-        return "پیام جدید از Castle X";
+        return "پیام جدید از Empire X";
 
       case "premium":
         return "پریمیوم شما فعال شد";
@@ -204,7 +204,7 @@ export default function Notifications() {
       case "top_creator":
       case "weekly_winner":
       case "weekly_ranking_result":
-        return notification.title || "Castle X برندگان هفته  مشخص شدند";
+        return notification.title || "Empire X برندگان هفته  مشخص شدند";
 
       case "top_post":
         return "پست شما وارد رتبه‌بندی برترین‌های هفته شد";
@@ -483,10 +483,10 @@ export default function Notifications() {
                 >
                   <b>
                     {rankingStyle
-                      ? "Castle X Rankings"
+                      ? "Empire X Rankings"
                       : notification.sender?.display_name ||
                         notification.sender?.username ||
-                        "Castle X"}
+                        "Empire X"}
                   </b>
 
                   {!rankingStyle && <Badge user={notification.sender} />}

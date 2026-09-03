@@ -64,7 +64,7 @@ export default function Register() {
             color: "#1d9bf0",
           }}
         >
-          Castle X
+          Empire X
         </h1>
 
         <p

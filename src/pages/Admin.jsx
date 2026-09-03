@@ -548,7 +548,7 @@ const rejectHotRequest = async (request) => {
       const res = await api.post(
         "/api/admin/notifications/custom",
         {
-          title: customNotifTitle.trim() || "Castle X",
+          title: customNotifTitle.trim() || "Empire X",
           message: customNotifMessage.trim(),
           target_type: customNotifTarget,
           usernames: customNotifUsernames,
@@ -607,7 +607,7 @@ const announceWeeklyWinners = async () => {
         ← Back to Home
       </Link>
 
-      <h1>Castle X Admin Panel</h1>
+      <h1>Empire X Admin panel</h1>
 
       <input
         value={search}
@@ -724,7 +724,7 @@ const announceWeeklyWinners = async () => {
         border: "1px solid #cbd5e1",
       }}
     >
-      <option value="admin_custom">پیام عمومی Castle X</option>
+      <option value="admin_custom">پیام عمومی  Empire X</option>
       <option value="broadcast">اطلاعیه رسمی</option>
       <option value="premium">پیام پریمیوم</option>
       <option value="weekly_ranking">پیام رتبه‌بندی</option>

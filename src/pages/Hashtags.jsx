@@ -186,7 +186,7 @@ export default function Hashtags() {
                   fontWeight: "700",
                 }}
               >
-                Popular topics in Castle X
+                Popular topics in Empire X
               </div>
             </div>
 

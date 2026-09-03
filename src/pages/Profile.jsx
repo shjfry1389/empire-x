@@ -375,7 +375,7 @@ if (!canSeeAnalytics || !canUseAnalytics) {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "Castle X",
+          title: "Empire X",
           text: `پروفایل ${user.username} رو ببین`,
           url: profileLink,
         });
@@ -848,7 +848,7 @@ if (!canSeeAnalytics || !canUseAnalytics) {
     >
       <div>
         <h3 style={{ margin: 0, fontSize: "20px" }}>
-         Castle X افتخارات رنکینگ 
+         Empire X افتخارات رنکینگ 
         </h3>
         <p
           style={{

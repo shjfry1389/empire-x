@@ -570,8 +570,8 @@ const requestHotPost = async () => {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "Castle X",
-          text: " توییت من در کستل ایکس",
+          title: "Empire X",
+          text: " توییت من در امپایر ایکس",
           url: postLink,
         });
       } else {

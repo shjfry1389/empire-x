@@ -469,7 +469,7 @@ const RankingsIcon = () => (
             fontSize: "24px",
           }}
         >
-          Castle X
+          Empire X
         </Link>
 
         <div
