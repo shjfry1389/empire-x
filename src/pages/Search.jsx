@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import api from "../services/api";
@@ -88,6 +88,17 @@ export default function Search() {
   const [users, setUsers] = useState([]);
 
   const navigate = useNavigate();
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    if (query.trim()) {
+      searchUsers();
+    } else {
+      setUsers([]);
+    }
+  }, 300);
+
+  return () => clearTimeout(timer);
+}, [query]);
 
   const searchUsers = async () => {
     try {
