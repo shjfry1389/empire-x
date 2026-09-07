@@ -571,6 +571,27 @@ if (!canSeeAnalytics || !canUseAnalytics) {
   <ShareIcon />
   Share
 </button>
+{currentUser?.username === user.username && (
+  <button
+    onClick={() => navigate("/saved")}
+    title="Saved Posts"
+    style={{
+      border: "1px solid #cfd9de",
+      background: "white",
+      color: "#0f172a",
+      borderRadius: "9999px",
+      width: "42px",
+      height: "42px",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: "20px",
+    }}
+  >
+    🔖
+  </button>
+)}
             {currentUser?.username !== user.username && (
               <>
                 <button
