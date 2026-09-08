@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import api from "../services/api";
 import PostCard from "../components/PostCard";
@@ -98,6 +98,36 @@ const [postsLoading, setPostsLoading] = useState(false);
   const [premiumAnalytics, setPremiumAnalytics] = useState(null);
 const [premiumAnalyticsLoading, setPremiumAnalyticsLoading] = useState(false);
 const [themeSaving, setThemeSaving] = useState(false);
+const [musicFile, setMusicFile] = useState(null);
+const [musicUploading, setMusicUploading] = useState(false);
+const [profileMusic, setProfileMusic] = useState(null);
+const [musicPlaying, setMusicPlaying] = useState(false);
+const audioRef = useRef(null);
+useEffect(() => {
+  if (!profileUsername) return;
+
+  api
+    .get(`/api/profile/music/${encodeURIComponent(profileUsername)}`)
+    .then((res) => {
+      setProfileMusic(res.data.music);
+    })
+    .catch(() => {
+      setProfileMusic(null);
+      setMusicPlaying(false);
+    });
+}, [profileUsername]);
+useEffect(() => {
+  if (!profileMusic?.url || !audioRef.current) return;
+
+  audioRef.current.volume = 0.5;
+
+  audioRef.current
+    .play()
+    .then(() => setMusicPlaying(true))
+    .catch(() => {
+      setMusicPlaying(false);
+    });
+}, [profileMusic]);
 const loadProfilePosts = async (pageNumber = 1, replace = true) => {
   try {
     setPostsLoading(true);
@@ -288,7 +318,61 @@ if (!canSeeAnalytics || !canUseAnalytics) {
       );
     }
   };
+const uploadProfileMusic = async () => {
+  try {
+    if (!musicFile) {
+      alert("یک فایل موسیقی انتخاب کن");
+      return;
+    }
 
+    if (musicFile.size > 20 * 1024 * 1024) {
+      alert("حجم موسیقی نباید بیشتر از 20MB باشد");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("برای آپلود موسیقی باید وارد حساب شوید");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("music", musicFile);
+
+    setMusicUploading(true);
+
+    const res = await api.post(
+      "/api/profile/music/upload",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setMusicFile(null);
+
+    alert(res.data?.message || "موسیقی پروفایل با موفقیت آپلود شد");
+
+    const profileRes = await api.get(
+      `/api/users/${encodeURIComponent(profileUsername)}`
+    );
+
+    setUser(profileRes.data);
+  } catch (err) {
+    console.error(err);
+
+    alert(
+      err.response?.data?.error ||
+        err.response?.data?.message ||
+        "خطا در آپلود موسیقی"
+    );
+  } finally {
+    setMusicUploading(false);
+  }
+};
   const saveProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -786,6 +870,163 @@ if (!canSeeAnalytics || !canUseAnalytics) {
       ))}
     </div>
   )}
+  {currentUser?.username === user.username &&
+  (isPremiumActive(user) || user.role === "admin") && (
+    <div
+      style={{
+        marginTop: "18px",
+        padding: "16px",
+        borderRadius: "18px",
+        background:
+          "linear-gradient(135deg,#f8fafc,#e2e8f0)",
+        border: "1px solid #cbd5e1",
+      }}
+    >
+      <div
+        style={{
+          fontWeight: "900",
+          fontSize: "16px",
+          color: "#0f172a",
+          marginBottom: "6px",
+        }}
+      >
+        🎵 Profile Music
+      </div>
+
+      <div
+        style={{
+          color: "#64748b",
+          fontSize: "13px",
+          marginBottom: "12px",
+        }}
+      >
+        یک موسیقی برای پروفایلت انتخاب کن
+      </div>
+
+      <input
+        type="file"
+        accept="audio/*"
+        onChange={(e) =>
+          setMusicFile(e.target.files?.[0] || null)
+        }
+        style={{
+          width: "100%",
+          marginBottom: "10px",
+        }}
+      />
+
+      <button
+        onClick={uploadProfileMusic}
+        disabled={musicUploading}
+        style={{
+          border: "none",
+          background: musicUploading ? "#94a3b8" : "#111827",
+          color: "#fff",
+          borderRadius: "999px",
+          padding: "10px 18px",
+          cursor: musicUploading ? "not-allowed" : "pointer",
+          fontWeight: "800",
+        }}
+      >
+        {musicUploading ? "Uploading..." : "🎵 Upload Music"}
+      </button>
+
+      {user.profile_music_title && (
+        <div
+          style={{
+            marginTop: "12px",
+            padding: "10px 12px",
+            borderRadius: "12px",
+            background: "#fff",
+            border: "1px solid #e2e8f0",
+            color: "#334155",
+            fontSize: "13px",
+          }}
+        >
+          🎶 موسیقی فعلی:{" "}
+          <strong>{user.profile_music_title}</strong>
+        </div>
+      )}
+    </div>
+  )}
+  {profileMusic?.url && (
+  <div
+    style={{
+      marginTop: "14px",
+      padding: "12px 14px",
+      borderRadius: "16px",
+      background: "#0f172a",
+      color: "#fff",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: "12px",
+      flexWrap: "wrap",
+    }}
+  >
+    <audio
+      ref={audioRef}
+      src={profileMusic.url}
+      loop
+      preload="auto"
+    />
+
+    <div
+      style={{
+        minWidth: 0,
+        flex: 1,
+      }}
+    >
+      <div
+        style={{
+          fontSize: "12px",
+          color: "#94a3b8",
+          marginBottom: "3px",
+        }}
+      >
+        🎵 Profile Music
+      </div>
+
+      <div
+        style={{
+          fontWeight: "800",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {profileMusic.title}
+      </div>
+    </div>
+
+    <button
+      onClick={() => {
+        if (!audioRef.current) return;
+
+        if (musicPlaying) {
+          audioRef.current.pause();
+          setMusicPlaying(false);
+        } else {
+          audioRef.current
+            .play()
+            .then(() => setMusicPlaying(true))
+            .catch(console.error);
+        }
+      }}
+      style={{
+        border: "none",
+        background: "#fff",
+        color: "#111827",
+        borderRadius: "999px",
+        padding: "9px 14px",
+        cursor: "pointer",
+        fontWeight: "800",
+      }}
+    >
+      {musicPlaying ? "⏸ Pause" : "▶️ Play"}
+    </button>
+  </div>
+)}
           {user.bio && (
             <div style={{ marginTop: "14px", fontSize: "15px" }}>
               {user.bio}
