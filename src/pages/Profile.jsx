@@ -373,6 +373,53 @@ const uploadProfileMusic = async () => {
     setMusicUploading(false);
   }
 };
+const deleteProfileMusic = async () => {
+  const confirmed = window.confirm(
+    "مطمئنی می‌خوای موسیقی پروفایل حذف بشه؟"
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("برای حذف موسیقی باید وارد حساب شوید");
+      return;
+    }
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+
+    setMusicPlaying(false);
+
+    await api.delete("/api/profile/music", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setProfileMusic(null);
+
+    setUser((prev) => ({
+      ...prev,
+      profile_music_url: null,
+      profile_music_title: null,
+      profile_music_enabled: false,
+    }));
+
+    alert("موسیقی پروفایل حذف شد");
+  } catch (err) {
+    console.error(err);
+
+    alert(
+      err.response?.data?.error ||
+        "خطا در حذف موسیقی"
+    );
+  }
+};
   const saveProfile = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -949,19 +996,15 @@ const uploadProfileMusic = async () => {
       )}
     </div>
   )}
+  
   {profileMusic?.url && (
   <div
     style={{
       marginTop: "14px",
-      padding: "12px 14px",
-      borderRadius: "16px",
+      padding: "14px",
+      borderRadius: "18px",
       background: "#0f172a",
       color: "#fff",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: "12px",
-      flexWrap: "wrap",
     }}
   >
     <audio
@@ -969,62 +1012,122 @@ const uploadProfileMusic = async () => {
       src={profileMusic.url}
       loop
       preload="auto"
+      onEnded={() => setMusicPlaying(false)}
     />
 
     <div
       style={{
-        minWidth: 0,
-        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "12px",
+        flexWrap: "wrap",
       }}
     >
       <div
         style={{
-          fontSize: "12px",
-          color: "#94a3b8",
-          marginBottom: "3px",
+          minWidth: 0,
+          flex: 1,
         }}
       >
-        🎵 Profile Music
+        <div
+          style={{
+            fontSize: "12px",
+            color: "#94a3b8",
+            marginBottom: "4px",
+          }}
+        >
+          🎵 Profile Music
+        </div>
+
+        <div
+          style={{
+            fontWeight: "800",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {profileMusic.title}
+        </div>
       </div>
 
       <div
         style={{
-          fontWeight: "800",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
+          display: "flex",
+          gap: "8px",
+          flexWrap: "wrap",
         }}
       >
-        {profileMusic.title}
+        {/* Play / Pause */}
+        <button
+          onClick={() => {
+            if (!audioRef.current) return;
+
+            if (musicPlaying) {
+              audioRef.current.pause();
+              setMusicPlaying(false);
+            } else {
+              audioRef.current
+                .play()
+                .then(() => setMusicPlaying(true))
+                .catch(console.error);
+            }
+          }}
+          style={{
+            border: "none",
+            background: "#fff",
+            color: "#111827",
+            borderRadius: "999px",
+            padding: "9px 14px",
+            cursor: "pointer",
+            fontWeight: "800",
+          }}
+        >
+          {musicPlaying ? "⏸ Pause" : "▶️ Play"}
+        </button>
+
+        {/* Stop */}
+        <button
+          onClick={() => {
+            if (!audioRef.current) return;
+
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            setMusicPlaying(false);
+          }}
+          style={{
+            border: "none",
+            background: "#e2e8f0",
+            color: "#111827",
+            borderRadius: "999px",
+            padding: "9px 14px",
+            cursor: "pointer",
+            fontWeight: "800",
+          }}
+        >
+          ⏹ Stop
+        </button>
+
+        {/* Delete */}
+        {currentUser?.username === user.username && (
+          <button
+            onClick={deleteProfileMusic}
+            style={{
+              border: "none",
+              background: "#dc2626",
+              color: "#fff",
+              borderRadius: "999px",
+              padding: "9px 14px",
+              cursor: "pointer",
+              fontWeight: "800",
+            }}
+          >
+            🗑️ Delete
+          </button>
+        )}
       </div>
     </div>
-
-    <button
-      onClick={() => {
-        if (!audioRef.current) return;
-
-        if (musicPlaying) {
-          audioRef.current.pause();
-          setMusicPlaying(false);
-        } else {
-          audioRef.current
-            .play()
-            .then(() => setMusicPlaying(true))
-            .catch(console.error);
-        }
-      }}
-      style={{
-        border: "none",
-        background: "#fff",
-        color: "#111827",
-        borderRadius: "999px",
-        padding: "9px 14px",
-        cursor: "pointer",
-        fontWeight: "800",
-      }}
-    >
-      {musicPlaying ? "⏸ Pause" : "▶️ Play"}
-    </button>
   </div>
 )}
           {user.bio && (
